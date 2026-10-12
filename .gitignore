@@ -1,0 +1,52 @@
+# Git ignore rules for Phase 1 — Scripting & Automation project
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# --- Virtual environments (not used in this project, but good practice) ---
+venv/
+env/
+.venv/
+.env/
+
+# --- Generated baseline files (these are outputs, not source code) ---
+# Uncomment the line below if you do NOT want to track baselines in git.
+# *.json
+
+# --- System files ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editor files ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Logs ---
+*.log
+
+# --- Reports (add your own reports; don't commit sensitive data) ---
+# reports/*.pdf
+# reports/*.docx
+
+# --- Do NOT commit ---
+# Private keys, passwords, credentials, or personal data
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_dsa
+.env
+secrets.*

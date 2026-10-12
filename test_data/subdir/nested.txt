@@ -1,0 +1,2 @@
+This file is inside a subdirectory.
+The scanner should find it recursively.

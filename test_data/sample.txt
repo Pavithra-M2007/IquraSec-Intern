@@ -1,0 +1,3 @@
+This is a sample file for the File Integrity Checker.
+It contains some text that will be hashed.
+If you modify this content, the checker will detect a change.
