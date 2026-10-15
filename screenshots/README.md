@@ -1,34 +1,34 @@
-# Screenshots
+# Screenshots — Phase 1 Scripting & Automation
 
-This folder is for storing terminal screenshots of both tools in action.
+This folder contains screenshots documenting the execution and testing of the Bash and Python security tools developed for Phase 1 of the IqraSec Academy Cybersecurity Scripting & Automation Internship.
 
-## Required Screenshots
+## Screenshot Documentation
 
-Capture the following screenshots to document your work for your internship review.
-Use a tool like `scrot`, `gnome-screenshot`, or your desktop environment's screenshot key.
+### Bash Linux Security Checker
 
-| Filename | Command to run |
-|----------|---------------|
-| `01_bash_help.png` | `bash bash_tool/security_checker.sh --help` |
-| `02_bash_system.png` | `bash bash_tool/security_checker.sh --system` |
-| `03_bash_disk.png` | `bash bash_tool/security_checker.sh --disk` |
-| `04_bash_memory.png` | `bash bash_tool/security_checker.sh --memory` |
-| `05_bash_firewall.png` | `bash bash_tool/security_checker.sh --firewall` |
-| `06_bash_services.png` | `bash bash_tool/security_checker.sh --services` |
-| `07_bash_permissions.png` | `bash bash_tool/security_checker.sh --permissions /tmp` |
-| `08_python_help.png` | `python3 python_tool/file_integrity_checker.py --help` |
-| `09_python_baseline.png` | `python3 python_tool/file_integrity_checker.py baseline --path test_data --output baseline.json` |
-| `10_python_check_clean.png` | `python3 python_tool/file_integrity_checker.py check --path test_data --baseline baseline.json` |
-| `11_python_check_modified.png` | Append a line to `test_data/sample.txt`, then run the check again |
-| `12_unit_tests.png` | `python3 tests/test_file_integrity_checker.py -v` |
+| Screenshot | Description |
+|---|---|
+| `01_bash_help.png` | Displays the available commands and usage instructions. |
+| `02_bash_system.png` | Shows basic Linux system information. |
+| `03_bash_disk.png` | Displays disk usage information. |
+| `04_bash_memory.png` | Shows memory usage information. |
+| `05_bash_firewall.png` | Displays firewall status information. |
+| `06_bash_services.png` | Lists relevant system services and their status. |
+| `07_bash_permissions.png` | Checks permissions for the specified directory. |
 
-## Tips for Good Screenshots
+### Python File Integrity Checker
 
-- Make your terminal font large enough to read easily.
-- Capture the full terminal window, including the command you ran.
-- Use a dark terminal theme for better visibility.
-- Name each file exactly as listed above so your mentor can identify them easily.
+| Screenshot | Description |
+|---|---|
+| `08_python_help.png` | Displays the available commands and usage instructions. |
+| `09_python_baseline.png` | Demonstrates creating a SHA-256 file integrity baseline. |
+| `10_python_check_clean.png` | Shows the result when files match the saved baseline. |
+| `11_python_check_modified.png` | Demonstrates detecting a modified file. |
+| `12_unit_tests.png` | Shows the unit test execution results. |
 
-## No screenshots are pre-generated in this repository.
+## Notes
 
-You must capture them yourself during a live demonstration.
+- The Bash tool performs read-only system checks.
+- The Python tool creates a JSON baseline and compares file hashes to identify changes.
+- Commands and outputs are documented to support verification and demonstration.
+- Run the commands from the project root directory to reproduce the results.
