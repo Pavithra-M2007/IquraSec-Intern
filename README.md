@@ -13,7 +13,8 @@ This repository contains two fully functional, read-only command-line security t
 | `security_checker.sh` | Bash | Inspect a Linux system for common security issues |
 | `file_integrity_checker.py` | Python 3 | Detect unexpected changes to files using SHA-256 hashes |
 
-Both tools are **read-only** — they never change any system settings or files.
+The Bash tool is **read-only** — it never changes any system settings or files.
+The Python tool **writes a JSON baseline file** when you run the `baseline` command; `check` and `hash` are read-only.
 
 ---
 
@@ -94,16 +95,14 @@ Both tools are **read-only** — they never change any system settings or files.
 ## 6. Installation and Setup
 
 ```bash
-# 1. Clone or copy the project folder
-cd /home/pavi/IqraSec
+# 1. Clone the repository
+git clone https://github.com/Pavithra-M2007/IquraSec-Intern.git
+cd IquraSec-Intern/phase1-scripting-automation
 
-# 2. Enter the project directory
-cd phase1-scripting-automation
-
-# 3. Make the Bash script executable (optional — you can also run with 'bash ...')
+# 2. Make the Bash script executable (optional — you can also run with 'bash ...')
 chmod +x bash_tool/security_checker.sh
 
-# 4. Verify Python is available
+# 3. Verify Python is available
 python3 --version
 ```
 
@@ -309,25 +308,40 @@ EOF
   Source path : test_data
   Output file : baseline.json
 
-  Scanning directory: .../phase1-scripting-automation/test_data
+  Scanning directory: /home/pavi/IqraSec/phase1-scripting-automation/test_data
   Please wait...
 
   Scan complete. 4 file(s) found.
 
   [OK] Baseline saved to: baseline.json
        Files recorded: 4
-       Created at    : 2026-10-12 09:48:00
+       Created at    : 2026-10-15 14:49:13
 ```
 
 ### Python — check after modifying a file
 ```
 ============================================================
+  INTEGRITY CHECK
+============================================================
+  Scan path    : test_data
+  Baseline file: baseline.json
+
+  Baseline created : 2026-10-15T14:49:13
+  Baseline scanned : /home/pavi/IqraSec/phase1-scripting-automation/test_data
+  Files in baseline: 4
+
+  Scanning directory: /home/pavi/IqraSec/phase1-scripting-automation/test_data
+  Please wait...
+
+  Scan complete. 4 file(s) found.
+
+============================================================
   FILE INTEGRITY REPORT
 ============================================================
 
   [PASS] Unchanged files: 3
-         ✓  config.conf
          ✓  README.md
+         ✓  config.conf
          ✓  subdir/nested.txt
 
   [ALERT] Modified files: 1
@@ -335,11 +349,19 @@ EOF
         file is malicious. Investigate changes in context.
 
          ✗  sample.txt
-            Baseline : 8ac7ca945b531049...
-            Current  : ec608ad8fb6e3afc...
+            Baseline : 8ac7ca945b531049252cbcfadbe4704b4665e11e9c1109c542f6cf811df314d4
+            Current  : 2f502ea1bd84f6ba734de797a3d47a6ef0e75cafa4208b8f5fa209acbdd827bd
 
+  [INFO]  New files (not in baseline): 0
+         (none)
+
+  [INFO]  Missing files (in baseline, not found now): 0
+         (none)
+
+------------------------------------------------------------
   RESULT: 1 change(s) detected.
           Modified: 1  |  New: 0  |  Missing: 0
+------------------------------------------------------------
 ```
 
 ---
@@ -351,46 +373,72 @@ EOF
 python3 tests/test_file_integrity_checker.py -v
 ```
 
-### Actual Test Results (verified 2026-10-12, Kali Linux 6.18, Python 3.13)
+### Actual Test Results (verified 2026-10-15, Kali Linux 6.18, Python 3.13)
 
 ```
-test_all_categories_together (TestCompareFiles) ... ok
-test_empty_baseline_and_current (TestCompareFiles) ... ok
-test_missing_file_detected (TestCompareFiles) ... ok
-test_modified_file (TestCompareFiles) ... ok
-test_new_file_detected (TestCompareFiles) ... ok
-test_unchanged_file (TestCompareFiles) ... ok
-test_detects_deleted_file (TestEndToEnd) ... ok
-test_detects_modified_file (TestEndToEnd) ... ok
-test_detects_new_file (TestEndToEnd) ... ok
-test_no_changes_after_baseline (TestEndToEnd) ... ok
-test_different_content_different_hash (TestHashFile) ... ok
-test_empty_file_returns_hash (TestHashFile) ... ok
-test_hash_known_value (TestHashFile) ... ok
-test_hash_returns_64_char_hex_string (TestHashFile) ... ok
-test_nonexistent_file_returns_none (TestHashFile) ... ok
-test_same_content_same_hash (TestHashFile) ... ok
-test_load_invalid_json_returns_none (TestSaveAndLoadBaseline) ... ok
-test_load_missing_files_key_returns_none (TestSaveAndLoadBaseline) ... ok
-test_load_nonexistent_returns_none (TestSaveAndLoadBaseline) ... ok
-test_save_and_load_round_trip (TestSaveAndLoadBaseline) ... ok
-test_save_creates_file (TestSaveAndLoadBaseline) ... ok
-test_saved_baseline_has_metadata (TestSaveAndLoadBaseline) ... ok
-test_scan_empty_directory (TestScanDirectory) ... ok
-test_scan_finds_nested_files (TestScanDirectory) ... ok
-test_scan_finds_top_level_files (TestScanDirectory) ... ok
-test_scan_returns_hashes (TestScanDirectory) ... ok
-test_scan_uses_relative_paths (TestScanDirectory) ... ok
+test_all_categories_together (__main__.TestCompareFiles.test_all_categories_together)
+Test all four categories in a single comparison. ... ok
+test_empty_baseline_and_current (__main__.TestCompareFiles.test_empty_baseline_and_current)
+Comparing two empty sets should produce no changes. ... ok
+test_missing_file_detected (__main__.TestCompareFiles.test_missing_file_detected)
+A file in the baseline but not the current scan is 'missing'. ... ok
+test_modified_file (__main__.TestCompareFiles.test_modified_file)
+A file with a different hash must appear in 'modified'. ... ok
+test_new_file_detected (__main__.TestCompareFiles.test_new_file_detected)
+A file present in the current scan but not the baseline is 'new'. ... ok
+test_unchanged_file (__main__.TestCompareFiles.test_unchanged_file)
+A file with the same hash in both sets must be 'unchanged'. ... ok
+test_detects_deleted_file (__main__.TestEndToEnd.test_detects_deleted_file)
+A file deleted after the baseline was saved must show as 'missing'. ... ok
+test_detects_modified_file (__main__.TestEndToEnd.test_detects_modified_file)
+After modifying a file, compare_files must detect it. ... ok
+test_detects_new_file (__main__.TestEndToEnd.test_detects_new_file)
+A file added after the baseline was saved must show as 'new'. ... ok
+test_no_changes_after_baseline (__main__.TestEndToEnd.test_no_changes_after_baseline)
+After creating a baseline and scanning without changes, ... ok
+test_different_content_different_hash (__main__.TestHashFile.test_different_content_different_hash)
+Two files with different content must produce different hashes. ... ok
+test_empty_file_returns_hash (__main__.TestHashFile.test_empty_file_returns_hash)
+An empty file is valid and should return its SHA-256 hash. ... ok
+test_hash_known_value (__main__.TestHashFile.test_hash_known_value)
+Verify hash against a known SHA-256 value for 'hello world'. ... ok
+test_hash_returns_64_char_hex_string (__main__.TestHashFile.test_hash_returns_64_char_hex_string)
+SHA-256 digest must be a 64-character lowercase hex string. ... ok
+test_nonexistent_file_returns_none (__main__.TestHashFile.test_nonexistent_file_returns_none)
+Attempting to hash a nonexistent file should return None. ... ok
+test_same_content_same_hash (__main__.TestHashFile.test_same_content_same_hash)
+Two files with identical content must produce the same hash. ... ok
+test_load_invalid_json_returns_none (__main__.TestSaveAndLoadBaseline.test_load_invalid_json_returns_none)
+Loading a file with invalid JSON content should return None. ... ok
+test_load_missing_files_key_returns_none (__main__.TestSaveAndLoadBaseline.test_load_missing_files_key_returns_none)
+A JSON file without the 'files' key should return None. ... ok
+test_load_nonexistent_returns_none (__main__.TestSaveAndLoadBaseline.test_load_nonexistent_returns_none)
+Loading a nonexistent baseline file should return None. ... ok
+test_save_and_load_round_trip (__main__.TestSaveAndLoadBaseline.test_save_and_load_round_trip)
+Data saved with save_baseline() must be exactly recoverable. ... ok
+test_save_creates_file (__main__.TestSaveAndLoadBaseline.test_save_creates_file)
+save_baseline() must create the output file. ... ok
+test_saved_baseline_has_metadata (__main__.TestSaveAndLoadBaseline.test_saved_baseline_has_metadata)
+The saved JSON must include a 'metadata' section. ... ok
+test_scan_empty_directory (__main__.TestScanDirectory.test_scan_empty_directory)
+Scanning an empty directory should return an empty dict. ... ok
+test_scan_finds_nested_files (__main__.TestScanDirectory.test_scan_finds_nested_files)
+Scanner must find files in subdirectories (recursive). ... ok
+test_scan_finds_top_level_files (__main__.TestScanDirectory.test_scan_finds_top_level_files)
+Scanner must find files in the top-level directory. ... ok
+test_scan_returns_hashes (__main__.TestScanDirectory.test_scan_returns_hashes)
+Each entry must have a 64-character hex hash value. ... ok
+test_scan_uses_relative_paths (__main__.TestScanDirectory.test_scan_uses_relative_paths)
+Stored paths must be relative to the scan root (not absolute). ... ok
 
 ----------------------------------------------------------------------
-Ran 27 tests in 0.018s
+Ran 27 tests in 0.014s
 
 OK
 ```
 
-> **Note:** In Python 3.13 verbose mode, test names appear with their class in parentheses, e.g.
-> `test_modified_file (__main__.TestCompareFiles.test_modified_file)`. The table above shows the
-> simplified form for readability.
+> **Note:** In Python 3.13, verbose mode prints the full class path, e.g.
+> `test_modified_file (__main__.TestCompareFiles.test_modified_file)`. This is the exact output.
 
 **Result: 27/27 tests passed.**
 
@@ -413,6 +461,7 @@ bash -n bash_tool/security_checker.sh
 - **Not a replacement for dedicated tools**: This is a learning exercise. For production environments, use dedicated security scanners (Lynis, OpenSCAP, etc.).
 
 ### Python File Integrity Checker
+- **Writes on demand**: The `baseline` subcommand creates a JSON file on disk. `check` and `hash` are read-only.
 - **A changed hash does NOT mean a file is malicious.** It means the file content has changed. System updates legitimately change many files.
 - **Baseline is a snapshot in time.** Always re-create the baseline after legitimate changes (updates, configuration changes).
 - **Does not detect all threats**: This tool detects content changes. It cannot detect rootkits that intercept file reads.
@@ -472,7 +521,7 @@ By completing this phase, you have:
 4. **Understood baselines** — creating a known-good snapshot and comparing against it is a fundamental security practice.
 5. **Practised error handling** — the tools gracefully handle missing files, permission errors, bad input, and corrupted data.
 6. **Written 27 automated unit tests** — testing proves the code works correctly without manual re-checking every time.
-7. **Followed secure coding principles**: read-only operations, no hardcoded credentials, no scanning of systems you don't own, and honest result reporting (no false PASSes).
+7. **Followed secure coding principles**: minimal writes (the Bash tool is fully read-only; the Python tool only writes a JSON baseline when you explicitly request it), no hardcoded credentials, no scanning of systems you don't own, and honest result reporting (no false PASSes).
 
 ---
 
